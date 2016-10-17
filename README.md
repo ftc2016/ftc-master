@@ -1,2 +1,2 @@
 # ftc-master
-# Code for color sensor
+# Robot design (CAD)
