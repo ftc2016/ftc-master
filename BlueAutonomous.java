@@ -50,38 +50,41 @@ public class BlueAutonomous extends LinearOpMode {
 
         waitForStart();
 
-        forwardBeggining(1000, 0.1);
+        moveForward(3500, 0.1);
         updateTelemetryStatus();
 
         shoot(1000);
 
-        moveRight(2300,0.1);
+        moveRight(2500,0.3);
         updateTelemetryStatus();
 
-        moveforwardWithODS(0.1);
+        moveforwardWithODSCheck(0.08);
         updateTelemetryStatus();
 
-        moveRight(500, 0.1);
+        moveRight(900, 0.3);
         updateTelemetryStatus();
 
         BeaconPusher();
 
-        moveLeft(250, 0.1);
+        moveLeft(250, 0.3);
         updateTelemetryStatus();
 
-        moveforwardWithODS(0.1);
+        moveForward(600, 0.1);
+
+        moveforwardWithODSCheck(0.08);
+        sleep(300);
         updateTelemetryStatus();
 
-        moveRight(500, 0.1);
+        moveRight(900, 0.3);
         updateTelemetryStatus();
 
+        BeaconPusher();
     }
 
     private void updateTelemetryStatus() {
-        telemetry.addData("Right front : " , rightMotor.getPower());
-        telemetry.addData("Right back : " , mototrbackRight.getPower());
-        telemetry.addData("Left front : " , leftMotor.getPower());
-        telemetry.addData("Left back : " , motorbackLeft.getPower());
+        telemetry.addData("ODS Raw", ods2.getRawLightDetected());
+        telemetry.addData("ODS ", ods2.getLightDetected());
+        telemetry.addData("ODS Raw 1 ", ods1.getRawLightDetected());
         telemetry.addData("Color sensor red", colorSensor.red());
         telemetry.addData("Color sensor blue", colorSensor.blue());
         telemetry.update();
@@ -115,7 +118,7 @@ public class BlueAutonomous extends LinearOpMode {
         }
 
     }
-    public void forwardBeggining (int i, double power) {
+    public void moveForward(int i, double power) {
         leftMotor.setPower(-power);
         rightMotor.setPower(-power);
         mototrbackRight.setPower(-power);
@@ -127,10 +130,14 @@ public class BlueAutonomous extends LinearOpMode {
         mototrbackRight.setPower(0);
     }
 
-    public void moveforwardWithODS (double power) {
+    public void moveforwardWithODSCheck(double power) {
         int i = 0;
+        telemetry.addData("Raw ODS Light ", ods2.getRawLightDetected());
+        telemetry.addData("ODS Light ", ods2.getLightDetected());
+        telemetry.update();
+        sleep(500);
         while (i < 5000) {
-            if (ods1.getRawLightDetected()  >= 1){
+            if (ods2.getRawLightDetected()  >= 1 || ods1.getRawLightDetected() >=1 ){
                 leftMotor.setPower(0);
                 rightMotor.setPower(0);
                 mototrbackRight.setPower(0);
@@ -141,10 +148,14 @@ public class BlueAutonomous extends LinearOpMode {
                 rightMotor.setPower(-power);
                 mototrbackRight.setPower(-power);
                 motorbackLeft.setPower(-power);
-                sleep(100);
+                sleep(1);
             }
             i++;
         }
+        telemetry.addData("Raw ODS Light ", ods2.getRawLightDetected());
+        telemetry.addData("ODS Light ", ods2.getLightDetected());
+        telemetry.update();
+        sleep(500);
     }
 
     public void moveRight (int i, double power) {
