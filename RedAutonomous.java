@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="Blue Autonomous")
-public class BlueAutonomous extends LinearOpMode {
+@TeleOp(name="Red Autonomous")
+public class RedAutonomous extends LinearOpMode {
     DcMotor rightMotor;
     DcMotor leftMotor;
     DcMotor motorbackLeft;
@@ -57,18 +57,18 @@ public class BlueAutonomous extends LinearOpMode {
 
         moveForward(600, 0.1);
 
-        moveRight(2500,0.3);
+        moveLeft(2500,0.3);
         //updateTelemetryStatus();
 
         moveforwardWithODSCheck(0.08);
         //updateTelemetryStatus();
 
-        moveRight(520, 0.3);
+        moveLeft(520, 0.3);
         //updateTelemetryStatus();
 
         BeaconPusher();
 
-        moveLeft(380, 0.3);
+        moveRight(380, 0.3);
         //updateTelemetryStatus();
 
         moveForward(600, 0.1);
@@ -77,7 +77,7 @@ public class BlueAutonomous extends LinearOpMode {
         //sleep(300);
         //updateTelemetryStatus();
 
-        moveRight(400, 0.3);
+        moveLeft(400, 0.3);
         //updateTelemetryStatus();
 
         BeaconPusher();
