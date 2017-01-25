@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 @TeleOp(name="Blue Autonomous")
 public class BlueAutonomous extends LinearOpMode {
@@ -18,9 +19,11 @@ public class BlueAutonomous extends LinearOpMode {
     DcMotor Ball;
     Servo arm1;
     Servo arm2;
+    TouchSensor ts;
+    Servo arm3;
     ColorSensor colorSensor;
     OpticalDistanceSensor ods1;
-    OpticalDistanceSensor  ods2;
+    OpticalDistanceSensor ods2;
 
 
     @Override
@@ -38,47 +41,47 @@ public class BlueAutonomous extends LinearOpMode {
         ods1 = hardwareMap.opticalDistanceSensor.get("ods1");
         ods2 = hardwareMap.opticalDistanceSensor.get("ods2");
 
+        ts = hardwareMap.touchSensor.get("ts");
+        arm3 = hardwareMap.servo.get("arm3");
         colorSensor.enableLed(false);
 
         arm1.setDirection(Servo.Direction.REVERSE);
         arm2.setDirection(Servo.Direction.REVERSE);
+
         arm1.setPosition(0);
         arm2.setPosition(0);
+
         rightMotor.setPower(0);
         leftMotor.setPower(0);
 
 
         waitForStart();
 
-        moveForward(2900, 0.1);
-        //updateTelemetryStatus();
+        moveForward(2800, 0.1);
 
         shoot(1000);
 
-        moveForward(600, 0.1);
+        moveForward(700, 0.1);
 
-        moveRight(2500,0.3);
-        //updateTelemetryStatus();
+        arm3.setPosition(1);
+
+        moveRight(2500, 0.3);
 
         moveforwardWithODSCheck(0.08);
-        //updateTelemetryStatus();
 
-        moveRight(520, 0.3);
-        //updateTelemetryStatus();
+        moverightuntilPressed(0.25);
 
         BeaconPusher();
 
-        moveLeft(380, 0.3);
-        //updateTelemetryStatus();
+        moveLeft(480, 0.25);
+
+        turnLeft(150);
 
         moveForward(600, 0.1);
 
         moveforwardWithODSCheck(0.08);
-        //sleep(300);
-        //updateTelemetryStatus();
 
-        moveRight(400, 0.3);
-        //updateTelemetryStatus();
+        moverightuntilPressed(0.25);
 
         BeaconPusher();
     }
@@ -98,51 +101,36 @@ public class BlueAutonomous extends LinearOpMode {
         telemetry.addData("Blue Color", colorSensor.blue());
         telemetry.addData("Red Color", colorSensor.red());
         telemetry.update();
-        sleep(2000);
-        if(colorSensor.blue() > 10) {
-
-            arm1.setPosition(1);
-            telemetry.addData("In Red", colorSensor.red());
-            telemetry.update();
-            sleep(1000);
-            arm1.setPosition(0);
-            telemetry.update();
-            sleep(1000);
-        }else{
+        sleep(500);
+        if (colorSensor.blue() > 10) {
             arm2.setPosition(1);
-            telemetry.addData("In blue", colorSensor.blue());
-            telemetry.update();
-            telemetry.update();
             sleep(1000);
             arm2.setPosition(0);
-            telemetry.update();
+            sleep(1000);
+        } else {
+            arm1.setPosition(1);
+            sleep(1000);
+            arm1.setPosition(0);
             sleep(1000);
         }
 
     }
+
     public void moveForward(int i, double power) {
         leftMotor.setPower(-power);
         rightMotor.setPower(-power);
         mototrbackRight.setPower(-power);
         motorbackLeft.setPower(-power);
         sleep(i);
-        leftMotor.setPower(0);
-        rightMotor.setPower(0);
-        motorbackLeft.setPower(0);
-        mototrbackRight.setPower(0);
+        stop(100);
     }
 
     public void moveforwardWithODSCheck(double power) {
         int i = 0;
-        while (i < 5000) {
-            if (ods2.getRawLightDetected()  >= 3 || ods1.getRawLightDetected() >=3 ){
-                leftMotor.setPower(0);
-                rightMotor.setPower(0);
-                mototrbackRight.setPower(0);
-                motorbackLeft.setPower(0);
-                sleep(1000);
+        while (i < 10000) {
+            if (ods2.getRawLightDetected() >= 2.4 || ods1.getRawLightDetected() >= 2.4) {
                 break;
-            }else{
+            } else {
                 leftMotor.setPower(-power);
                 rightMotor.setPower(-power);
                 mototrbackRight.setPower(-power);
@@ -151,45 +139,68 @@ public class BlueAutonomous extends LinearOpMode {
             }
             i++;
         }
+        stop(1000);
         telemetry.addData("Raw ODS Light ", ods2.getRawLightDetected());
         telemetry.addData("ODS Light ", ods2.getLightDetected());
         telemetry.update();
         sleep(2000);
     }
+    public void stop(int time){
+        leftMotor.setPower(0);
+        rightMotor.setPower(0);
+        mototrbackRight.setPower(0);
+        motorbackLeft.setPower(0);
+        sleep(time);
 
-    public void moveRight (int i, double power) {
+    }
+
+    public void moveRight(int i, double power) {
         rightMotor.setPower(power);
         mototrbackRight.setPower(-power);
         leftMotor.setPower(-power);
         motorbackLeft.setPower(power);
         sleep(i);
-        leftMotor.setPower(0);
-        rightMotor.setPower(0);
-        motorbackLeft.setPower(0);
-        mototrbackRight.setPower(0);
+        stop(100);
     }
-    public void moveLeft (int i, double power) {
+
+    public void moveLeft(int i, double power) {
         rightMotor.setPower(-power);
         mototrbackRight.setPower(power);
         leftMotor.setPower(power);
         motorbackLeft.setPower(-power);
         sleep(i);
-        leftMotor.setPower(0);
-        rightMotor.setPower(0);
-        motorbackLeft.setPower(0);
-        mototrbackRight.setPower(0);
+        stop(100);
     }
-    public void turn (int i) {
+
+    public void turnLeft(int i) {
         rightMotor.setPower(-0.3);
-        leftMotor.setPower(0.3);
+        mototrbackRight.setPower(-0.3);
+        leftMotor.setPower(0);
+        motorbackLeft.setPower(0);
         sleep(i);
     }
-    public void shoot (int i) {
+
+    public void shoot(int i) {
         Ball.setPower(1);
         sleep(i);
         Ball.setPower(0);
         sleep(100);
 
     }
+
+    public void moverightuntilPressed(double power) {
+        boolean tspressed = false;
+        while (!tspressed) {
+            rightMotor.setPower(power);
+            mototrbackRight.setPower(-power);
+            leftMotor.setPower(-power);
+            motorbackLeft.setPower(power);
+            if (ts.isPressed()) {
+                tspressed = true;
+            }
+        }
+        stop(100);
+    }
+
 }
 
