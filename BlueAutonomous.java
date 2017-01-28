@@ -1,5 +1,5 @@
-package org.firstinspires.ftc.teamcode;
 
+package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -57,11 +57,11 @@ public class BlueAutonomous extends LinearOpMode {
 
         waitForStart();
 
-        moveForward(2800, 0.1);
+        moveForward(2500, 0.1);
 
         shoot(1000);
 
-        moveForward(700, 0.1);
+        moveForward(1000, 0.1);
 
         arm3.setPosition(1);
 
@@ -69,7 +69,9 @@ public class BlueAutonomous extends LinearOpMode {
 
         moveforwardWithODSCheck(0.08);
 
-        moverightuntilPressed(0.25);
+        moveForward(200, 0.1);
+
+        moverightuntilPressed(0.2);
 
         BeaconPusher();
 
@@ -81,9 +83,21 @@ public class BlueAutonomous extends LinearOpMode {
 
         moveforwardWithODSCheck(0.08);
 
-        moverightuntilPressed(0.25);
+        moveForward(200, 0.1);
+
+        moverightuntilPressed(0.2);
 
         BeaconPusher();
+
+        moveLeft(400, .25);
+
+        moveBackward(700, .3);
+
+        turnLeft(2400);
+
+        moveForward(1150, 0.5);
+
+
     }
 
     private void updateTelemetryStatus() {
@@ -125,10 +139,18 @@ public class BlueAutonomous extends LinearOpMode {
         stop(100);
     }
 
+    public void moveBackward(int i, double power) {
+        leftMotor.setPower(power);
+        rightMotor.setPower(power);
+        mototrbackRight.setPower(power);
+        motorbackLeft.setPower(power);
+        sleep(i);
+        stop(100);
+    }
     public void moveforwardWithODSCheck(double power) {
         int i = 0;
-        while (i < 10000) {
-            if (ods2.getRawLightDetected() >= 2.4 || ods1.getRawLightDetected() >= 2.4) {
+        while (i < 10000 && opModeIsActive()) {
+            if (ods2.getRawLightDetected() >= 2.2 ) {
                 break;
             } else {
                 leftMotor.setPower(-power);
@@ -173,8 +195,8 @@ public class BlueAutonomous extends LinearOpMode {
     }
 
     public void turnLeft(int i) {
-        rightMotor.setPower(-0.3);
-        mototrbackRight.setPower(-0.3);
+        rightMotor.setPower(-0.6);
+        mototrbackRight.setPower(-0.6);
         leftMotor.setPower(0);
         motorbackLeft.setPower(0);
         sleep(i);
@@ -183,6 +205,9 @@ public class BlueAutonomous extends LinearOpMode {
     public void shoot(int i) {
         Ball.setPower(1);
         sleep(i);
+        telemetry.addData("Shooting ", "");
+        telemetry.update();
+        sleep(1000);
         Ball.setPower(0);
         sleep(100);
 
@@ -190,16 +215,22 @@ public class BlueAutonomous extends LinearOpMode {
 
     public void moverightuntilPressed(double power) {
         boolean tspressed = false;
-        while (!tspressed) {
+        while (!ts.isPressed() && opModeIsActive()) {
             rightMotor.setPower(power);
             mototrbackRight.setPower(-power);
             leftMotor.setPower(-power);
             motorbackLeft.setPower(power);
-            if (ts.isPressed()) {
+ /*           if (ts.isPressed()) {
                 tspressed = true;
-            }
+            }*/
+            telemetry.addData("Touch Sensor ", ts.isPressed());
+            telemetry.update();
+            sleep(1000);
         }
         stop(100);
+        telemetry.addData("Touch Sensor ", ts.isPressed());
+        telemetry.update();
+        sleep(1000);
     }
 
 }

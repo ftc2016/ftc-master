@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-@TeleOp(name="Red Autonomous")
-public class RedAutonomous extends LinearOpMode {
+@TeleOp(name="Red Autonomous No Parking")
+public class RedAutonomousNoParking extends LinearOpMode {
     DcMotor rightMotor;
     DcMotor leftMotor;
     DcMotor motorbackLeft;
@@ -61,11 +61,9 @@ public class RedAutonomous extends LinearOpMode {
 
         moveRight(2500, 0.3);
 
-        moveforwardWithODSCheck(0.08);
+        moveforwardWithODSCheck(0.075);
 
-        moveForward(200, 0.1);
-
-        moverightuntilPressed(0.2);
+        moverightuntilPressed(0.25);
 
         BeaconPusher();
 
@@ -75,11 +73,9 @@ public class RedAutonomous extends LinearOpMode {
 
         moveForward(600, 0.1);
 
-        moveforwardWithODSCheck(0.08);
+        moveforwardWithODSCheck(0.075);
 
-        moveForward(200, 0.1);
-
-        moverightuntilPressed(0.2);
+        moverightuntilPressed(0.25);
 
         BeaconPusher();
 
@@ -89,8 +85,6 @@ public class RedAutonomous extends LinearOpMode {
 
         shoot(400);
         stop(500);
-        moveBackward(1500, 0.6);
-        stop(1);
         //End of autonomous
 
     }

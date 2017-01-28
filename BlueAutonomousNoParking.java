@@ -1,5 +1,5 @@
-package org.firstinspires.ftc.teamcode;
 
+package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -9,12 +9,13 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-@TeleOp(name="Red Autonomous")
-public class RedAutonomous extends LinearOpMode {
+@TeleOp(name="Blue Autonomous No Parking")
+public class BlueAutonomousNoParking extends LinearOpMode {
     DcMotor rightMotor;
     DcMotor leftMotor;
     DcMotor motorbackLeft;
     DcMotor mototrbackRight;
+    DcMotor con;
     DcMotor Ball;
     Servo arm1;
     Servo arm2;
@@ -55,43 +56,36 @@ public class RedAutonomous extends LinearOpMode {
 
 
         waitForStart();
-        moveForward(3500, 0.1);
+
+        moveForward(2500, 0.1);
+
+        shoot(1000);
+
+        moveForward(1000, 0.1);
 
         arm3.setPosition(1);
 
         moveRight(2500, 0.3);
 
-        moveforwardWithODSCheck(0.08);
-
-        moveForward(200, 0.1);
+        moveforwardWithODSCheck(0.07);
 
         moverightuntilPressed(0.2);
 
         BeaconPusher();
 
-        moveLeft(480, 0.4);
+        moveLeft(480, 0.25);
 
-        turnLeft(200);
+        turnLeft(150);
 
         moveForward(600, 0.1);
 
-        moveforwardWithODSCheck(0.08);
-
-        moveForward(200, 0.1);
+        moveforwardWithODSCheck(0.07);
 
         moverightuntilPressed(0.2);
 
         BeaconPusher();
 
-        turn(1200);
 
-        moveBackward(500, 0.6);
-
-        shoot(400);
-        stop(500);
-        moveBackward(1500, 0.6);
-        stop(1);
-        //End of autonomous
 
     }
 
@@ -111,7 +105,7 @@ public class RedAutonomous extends LinearOpMode {
         telemetry.addData("Red Color", colorSensor.red());
         telemetry.update();
         sleep(500);
-        if (colorSensor.red() > 10) {
+        if (colorSensor.blue() > 10) {
             arm2.setPosition(1);
             sleep(1000);
             arm2.setPosition(0);
@@ -126,15 +120,6 @@ public class RedAutonomous extends LinearOpMode {
     }
 
     public void moveForward(int i, double power) {
-        leftMotor.setPower(power);
-        rightMotor.setPower(power);
-        mototrbackRight.setPower(power);
-        motorbackLeft.setPower(power);
-        sleep(i);
-        stop(100);
-    }
-
-    public void moveBackward(int i, double power) {
         leftMotor.setPower(-power);
         rightMotor.setPower(-power);
         mototrbackRight.setPower(-power);
@@ -142,16 +127,25 @@ public class RedAutonomous extends LinearOpMode {
         sleep(i);
         stop(100);
     }
+
+    public void moveBackward(int i, double power) {
+        leftMotor.setPower(power);
+        rightMotor.setPower(power);
+        mototrbackRight.setPower(power);
+        motorbackLeft.setPower(power);
+        sleep(i);
+        stop(100);
+    }
     public void moveforwardWithODSCheck(double power) {
         int i = 0;
-        while (i < 10000 ) {
-            if (ods2.getRawLightDetected() >= 2.2 || ods1.getRawLightDetected() >= 2.2) {
+        while (i < 10000 && opModeIsActive()) {
+            if (ods2.getRawLightDetected() >= 2.2 ) {
                 break;
             } else {
-                leftMotor.setPower(power);
-                rightMotor.setPower(power);
-                mototrbackRight.setPower(power);
-                motorbackLeft.setPower(power);
+                leftMotor.setPower(-power);
+                rightMotor.setPower(-power);
+                mototrbackRight.setPower(-power);
+                motorbackLeft.setPower(-power);
                 sleep(1);
             }
             i++;
@@ -190,8 +184,8 @@ public class RedAutonomous extends LinearOpMode {
     }
 
     public void turnLeft(int i) {
-        rightMotor.setPower(0.3);
-        mototrbackRight.setPower(0.3);
+        rightMotor.setPower(-0.6);
+        mototrbackRight.setPower(-0.6);
         leftMotor.setPower(0);
         motorbackLeft.setPower(0);
         sleep(i);
@@ -200,35 +194,33 @@ public class RedAutonomous extends LinearOpMode {
     public void shoot(int i) {
         Ball.setPower(1);
         sleep(i);
+        telemetry.addData("Shooting ", "");
+        telemetry.update();
+        sleep(1000);
         Ball.setPower(0);
         sleep(100);
-
-    }
-    public void turn(long i){
-        rightMotor.setPower(-0.3);
-        mototrbackRight.setPower(-0.3);
-        leftMotor.setPower(0);
-        motorbackLeft.setPower(0);
-        sleep(i);
 
     }
 
     public void moverightuntilPressed(double power) {
         boolean tspressed = false;
-        while (!tspressed && opModeIsActive()) {
+        while (!ts.isPressed() && opModeIsActive()) {
             rightMotor.setPower(power);
             mototrbackRight.setPower(-power);
             leftMotor.setPower(-power);
             motorbackLeft.setPower(power);
-            if (ts.isPressed()) {
+ /*           if (ts.isPressed()) {
                 tspressed = true;
-            }
+            }*/
+            telemetry.addData("Touch Sensor ", ts.isPressed());
+            telemetry.update();
+            sleep(1000);
         }
         stop(100);
+        telemetry.addData("Touch Sensor ", ts.isPressed());
+        telemetry.update();
+        sleep(1000);
     }
 
-
-
-    }
-
+}
 

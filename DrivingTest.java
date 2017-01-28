@@ -9,14 +9,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 
-@TeleOp(name = "Driving Test")
+@TeleOp(name = "Driving Period")
 public class DrivingTest extends OpMode {
 
     DcMotor motorRight;
     DcMotor motorLeft;
     DcMotor motorbackLeft;
     DcMotor mototrbackRight;
-    DcMotor con;
     DcMotor Ball;
     Servo arm1;
     Servo arm2;
@@ -36,27 +35,22 @@ public class DrivingTest extends OpMode {
 
     @Override
     public void loop() {
-        boolean down;
-        if (gamepad1.dpad_up) {
-            Ball.setPower(1);
+
+        if(gamepad2.right_trigger > 0.5) {
+            arm2.setPosition(1);
         }
-        if (gamepad1.dpad_down) {
-            Ball.setPower(0);
-        }
-        if (gamepad2.x) {
-            arm1.setPosition(1);
-        }
-        if (gamepad2.y) {
-            arm1.setPosition(0);
+        if(gamepad2.right_bumper) {
             arm2.setPosition(0);
         }
-        if (gamepad2.b) {
-            arm2.setPosition(1);
-        }
-        if (gamepad2.a) {
-            arm2.setPosition(1);
+        if(gamepad2.left_trigger > 0.5) {
             arm1.setPosition(1);
         }
+        if(gamepad2.left_bumper ) {
+            arm1.setPosition(0);
+        }
+
+
+
 
  //       while (opModeIsActive()) {
             float x1 = gamepad1.right_stick_x, y1 = -gamepad1.right_stick_y;
@@ -97,10 +91,10 @@ public class DrivingTest extends OpMode {
                 rightBackPower = (float)Range.scale(rightBackPower, -max, max, -1, 1);
             }
 
-            motorbackLeft.setPower(leftBackPower);
-            motorLeft.setPower(leftFrontPower);
-            motorRight.setPower(rightFrontPower);
-            mototrbackRight.setPower(rightBackPower);
+            motorbackLeft.setPower(-leftBackPower);
+            motorLeft.setPower(-leftFrontPower);
+            motorRight.setPower(-rightFrontPower);
+            mototrbackRight.setPower(-rightBackPower);
 
             // Here you set the motors' power to their respected power double.
             telemetry.addData("Right front : " , motorRight.getPower());
