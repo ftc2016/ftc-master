@@ -14,16 +14,19 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 @TeleOp(name="Autonomous Encoder")
 public class AutonomousEncoder extends LinearOpMode {
-    DcMotor motorRight;
-    DcMotor motorLeft;
-    //DcMotor BallLeft;
-    //DcMotor BallRight;
-    OpticalDistanceSensor  ods1;
-    OpticalDistanceSensor  ods2;
-    ColorSensor colorSensor;
+    DcMotor rightMotor;
+    DcMotor leftMotor;
+    DcMotor motorbackLeft;
+    DcMotor mototrbackRight;
     DcMotor con;
-    Servo leftArm;
-    Servo rightArm;
+    DcMotor Ball;
+    Servo arm1;
+    Servo arm2;
+    TouchSensor ts;
+    Servo arm3;
+    ColorSensor colorSensor;
+    OpticalDistanceSensor ods1;
+    OpticalDistanceSensor ods2;
 
     static final int ENCODER_CPR = 1120;
     static final double GEAR_RATIO = 2;
@@ -37,75 +40,104 @@ public class AutonomousEncoder extends LinearOpMode {
 
 
     @Override
-    public void runOpMode() throws NullPointerException {
-        motorLeft = hardwareMap.dcMotor.get("motor_right");
-
-        motorRight = hardwareMap.dcMotor.get("motor_left");
-        motorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        //BallLeft = hardwareMap.dcMotor.get("hit_left");
-        //BallRight = hardwareMap.dcMotor.get("hit_right");
-
-        leftArm = hardwareMap.servo.get("arm1");
-        rightArm = hardwareMap.servo.get("arm2");
-
+    public void runOpMode() throws InterruptedException {
+        arm1 = hardwareMap.servo.get("arm1");
+        arm2 = hardwareMap.servo.get("arm2");
+        rightMotor = hardwareMap.dcMotor.get("motor_right");
+        leftMotor = hardwareMap.dcMotor.get("motor_left");
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
+        motorbackLeft = hardwareMap.dcMotor.get("motor_backleft");
+        motorbackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        mototrbackRight = hardwareMap.dcMotor.get("motor_backright");
+        Ball = hardwareMap.dcMotor.get("shoot");
+        colorSensor = hardwareMap.colorSensor.get("sensor_color");
         ods1 = hardwareMap.opticalDistanceSensor.get("ods1");
         ods2 = hardwareMap.opticalDistanceSensor.get("ods2");
-        colorSensor = hardwareMap.colorSensor.get("sensor_color");
+
+        ts = hardwareMap.touchSensor.get("ts");
+        arm3 = hardwareMap.servo.get("arm3");
         colorSensor.enableLed(false);
 
+        arm1.setDirection(Servo.Direction.REVERSE);
+        arm2.setDirection(Servo.Direction.REVERSE);
 
-        motorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm1.setPosition(0);
+        arm2.setPosition(0);
 
-        motorLeft.setPower(0);
-        motorRight.setPower(0);
+        rightMotor.setPower(0);
+        leftMotor.setPower(0);
+        motorbackLeft.setPower(0);
+        mototrbackRight.setPower(0);
+
         waitForStart();
 
-        motorRight.setTargetPosition(-(int)COUNTS);
-        motorLeft.setTargetPosition(-(int)COUNTS);
-        motorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorLeft.setPower(.5);
-        motorRight.setPower(.5);
+        motorbackLeft.setTargetPosition(-(int)COUNTS);
+        mototrbackRight.setTargetPosition(-(int)COUNTS);
+        rightMotor.setTargetPosition(-(int)COUNTS);
+        leftMotor.setTargetPosition(-(int)COUNTS);
 
-        while (opModeIsActive() && motorLeft.isBusy() && motorRight.isBusy()){
-            telemetry.addData("left current position", motorLeft.getCurrentPosition());
-            telemetry.addData("right current position", motorRight.getCurrentPosition());
+        runToPosition();
+
+        motorbackLeft.setPower(.5);
+        mototrbackRight.setPower(.5);
+        rightMotor.setPower(.5);
+        leftMotor.setPower(.5);
+
+        while (opModeIsActive() && motorbackLeft.isBusy() && mototrbackRight.isBusy() &&
+                    rightMotor.isBusy() && leftMotor.isBusy()){
+            telemetry.addData("left current position", rightMotor.getCurrentPosition());
+            telemetry.addData("right current position", leftMotor.getCurrentPosition());
+            telemetry.addData("left back current position", motorbackLeft.getCurrentPosition());
+            telemetry.addData("right back current position", mototrbackRight.getCurrentPosition());
             telemetry.update();
 
         }
 
-        motorLeft.setPower(0);
-        motorRight.setPower(0);
-        motorLeft.setTargetPosition((motorRight.getCurrentPosition() + 2000));
-        motorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorLeft.setPower(.5);
+        shoot(1000);
+        motorbackLeft.setPower(0);
+        mototrbackRight.setPower(0);
+        rightMotor.setPower(0);
+        leftMotor.setPower(0);
 
-        while (opModeIsActive() && motorRight.isBusy()){
-            telemetry.addData("left current position", motorLeft.getCurrentPosition());
-            telemetry.addData("right current position", motorRight.getCurrentPosition());
+        rightMotor.setTargetPosition((rightMotor.getCurrentPosition() + 2000));
+        leftMotor.setTargetPosition((leftMotor.getCurrentPosition() - 2000));
+        mototrbackRight.setTargetPosition((mototrbackRight.getCurrentPosition() - 2000));
+        motorbackLeft.setTargetPosition((motorbackLeft.getCurrentPosition() + 2000));
+
+        runToPosition();
+
+        motorbackLeft.setPower(.5);
+        mototrbackRight.setPower(.5);
+        rightMotor.setPower(.5);
+        leftMotor.setPower(.5);
+
+
+        while (opModeIsActive() && motorbackLeft.isBusy() && mototrbackRight.isBusy() &&
+                rightMotor.isBusy() && leftMotor.isBusy()){
+            telemetry.addData("left current position", rightMotor.getCurrentPosition());
+            telemetry.addData("right current position", leftMotor.getCurrentPosition());
+            telemetry.addData("left back current position", motorbackLeft.getCurrentPosition());
+            telemetry.addData("right back current position", mototrbackRight.getCurrentPosition());
             telemetry.update();
 
         }
-
-/*        motorLeft.setPower(0);
-        motorRight.setPower(0);
-        motorLeft.setTargetPosition(motorRight.getCurrentPosition() + 2000);
-        motorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorRight.setTargetPosition(motorRight.getCurrentPosition() + 2000);
-        motorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorLeft.setPower(.5);
-        motorRight.setPower(.5);
-
-        while (opModeIsActive() && motorRight.isBusy()){
-            telemetry.addData("left current position", motorLeft.getCurrentPosition());
-            telemetry.addData("right current position", motorRight.getCurrentPosition());
-            telemetry.update();
-            if (ods1.getRawLightDetected()  >= 1) {
-                motorLeft.setPower(0);
-                motorRight.setPower(0);
-            }
-        }*/
     }
+    public void shoot(int i) {
+        Ball.setPower(1);
+        sleep(i);
+        telemetry.addData("Shooting ", "");
+        telemetry.update();
+        sleep(100);
+        Ball.setPower(0);
+        sleep(100);
+
+    }
+    public void runToPosition(){
+        motorbackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        mototrbackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+    }
+
 }
