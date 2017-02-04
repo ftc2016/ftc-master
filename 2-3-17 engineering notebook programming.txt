@@ -1,0 +1,8 @@
+Programming Team Meeting Reflections
+Date: 2/3/17
+
+People: Max, Vishnu, Srilatha (Mentor)'
+
+Need to finish for next meeting: Ask mentors to fix mecanum wheels (tell on hangouts to do research for best way to apply mecanum wheels)
+                                 Ask Creo Team to 3D print new beacon pusher (bumpy.prt)
+                                 Trouble-shoot ball shooter (Move robot closer to blue beacon side and closer to hoops)
