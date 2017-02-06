@@ -229,6 +229,7 @@ public class RedAutonomousEncoder extends LinearOpMode {
                 telemetry.addData("Raw ODS Light ", ods2.getRawLightDetected());
                 telemetry.addData("ODS Light ", ods2.getLightDetected());
                 telemetry.update();
+            }
         }
     }
     public void moveForwardWithODSCheck(int COUNTS){
