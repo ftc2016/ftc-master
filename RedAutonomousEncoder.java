@@ -219,8 +219,8 @@ public class RedAutonomousEncoder extends LinearOpMode {
                 rightMotor.setTargetPosition(rightMotor.getCurrentPosition() + 1000);
                 leftMotor.setTargetPosition((leftMotor.getCurrentPosition()  + 1000);
               }else{
-                mototrbackRight.setTargetPosition(rightMotor.getCurrentPosition() + 1000);
-                motorbackLeft.setTargetPosition((leftMotor.getCurrentPosition()  + 1000);
+                mototrbackRight.setTargetPosition(mototrbackRight.getCurrentPosition() + 1000);
+                motorbackLeft.setTargetPosition((motorbackLeft.getCurrentPosition()  + 1000);
               }
             runToPosition();
             setPower(0.25);
