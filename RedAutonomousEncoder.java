@@ -213,6 +213,24 @@ public class RedAutonomousEncoder extends LinearOpMode {
 
     }
 
+    public void followTheLine(){
+        while(!ts.isPressed()){
+              if (ods2.getRawLightDetected() >= 2.2) {
+                rightMotor.setTargetPosition(rightMotor.getCurrentPosition() + 1000);
+                leftMotor.setTargetPosition((leftMotor.getCurrentPosition()  + 1000);
+              }else{
+                mototrbackRight.setTargetPosition(rightMotor.getCurrentPosition() + 1000);
+                motorbackLeft.setTargetPosition((leftMotor.getCurrentPosition()  + 1000);
+              }
+            runToPosition();
+            setPower(0.25);
+            while (opModeIsActive() && motorbackLeft.isBusy() && mototrbackRight.isBusy() &&
+                rightMotor.isBusy() && leftMotor.isBusy()) {
+                telemetry.addData("Raw ODS Light ", ods2.getRawLightDetected());
+                telemetry.addData("ODS Light ", ods2.getLightDetected());
+                telemetry.update();
+        }
+    }
     public void moveForwardWithODSCheck(int COUNTS){
         rightMotor.setTargetPosition((rightMotor.getCurrentPosition() + (int) COUNTS));
         leftMotor.setTargetPosition((leftMotor.getCurrentPosition() + (int) COUNTS));
