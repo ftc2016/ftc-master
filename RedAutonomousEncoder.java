@@ -48,8 +48,9 @@ public class RedAutonomousEncoder extends LinearOpMode {
     final static double ROTATIONS_3 = DISTANCE_3 / CIRCUMFERENCE ;
     final static int COUNTS_3 = (int)(ENCODER_CPR * ROTATIONS_3 * GEAR_RATIO);
 
-    final static double ROTATIONS_4 = DISTANCE_1 / CIRCUMFERENCE ;
-    final static int COUNTS_4 = (int)(ENCODER_CPR * ROTATIONS_1 * GEAR_RATIO);
+    final static double ROTATIONS_4 = DISTANCE_4 / CIRCUMFERENCE ;
+    final static int COUNTS_4 = (int)(ENCODER_CPR * ROTATIONS_4 * GEAR_RATIO);
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -88,26 +89,48 @@ public class RedAutonomousEncoder extends LinearOpMode {
 
 
         moveForward(COUNTS_1);
-        arm3.setPosition(1);
         moveRight(COUNTS_2);
         moveForwardWithODSCheck(COUNTS_1);
-        moveRight_1(COUNTS_3);
+        moveRight_1(COUNTS_2);
         BeaconPusher();
         moveLeft(COUNTS_3);
         moveForward(COUNTS_1);
         moveForwardWithODSCheck(COUNTS_1 + COUNTS_2);
-        moveRight_1(COUNTS_3);
+        moveRight_1(COUNTS_2);
         BeaconPusher();
         moveLeft(COUNTS_3);
         moveBackward(COUNTS_4);
         moveLeft(COUNTS_3);
-        shoot(1000);
+        turnRight(COUNTS_3);
+        //shoot(1000); (Design Team Fixing Ball Shooter - 2/6/17)
     }
 
 
 
-
     //Method Details Below
+
+
+
+    public void turnRight(int COUNTS) {
+        rightMotor.setTargetPosition((rightMotor.getCurrentPosition() - (int) COUNTS));
+        mototrbackRight.setTargetPosition((mototrbackRight.getCurrentPosition() - (int) COUNTS));
+
+        runToPosition();
+        setPower(.5);
+        while (opModeIsActive() && motorbackLeft.isBusy() && mototrbackRight.isBusy() &&
+                rightMotor.isBusy() && leftMotor.isBusy()) {
+            if (ts.isPressed()) {
+                rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                mototrbackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                motorbackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                setPower(0);
+
+            }
+
+        }
+
+    }
 
 
 
@@ -213,25 +236,6 @@ public class RedAutonomousEncoder extends LinearOpMode {
 
     }
 
-    public void followTheLine(){
-        while(!ts.isPressed()){
-              if (ods2.getRawLightDetected() >= 2.2) {
-                rightMotor.setTargetPosition(rightMotor.getCurrentPosition() + 1000);
-                leftMotor.setTargetPosition((leftMotor.getCurrentPosition()  + 1000);
-              }else{
-                mototrbackRight.setTargetPosition(mototrbackRight.getCurrentPosition() + 1000);
-                motorbackLeft.setTargetPosition((motorbackLeft.getCurrentPosition()  + 1000);
-              }
-            runToPosition();
-            setPower(0.25);
-            while (opModeIsActive() && motorbackLeft.isBusy() && mototrbackRight.isBusy() &&
-                rightMotor.isBusy() && leftMotor.isBusy()) {
-                telemetry.addData("Raw ODS Light ", ods2.getRawLightDetected());
-                telemetry.addData("ODS Light ", ods2.getLightDetected());
-                telemetry.update();
-            }
-        }
-    }
     public void moveForwardWithODSCheck(int COUNTS){
         rightMotor.setTargetPosition((rightMotor.getCurrentPosition() + (int) COUNTS));
         leftMotor.setTargetPosition((leftMotor.getCurrentPosition() + (int) COUNTS));
@@ -282,5 +286,4 @@ public class RedAutonomousEncoder extends LinearOpMode {
         leftMotor.setPower(power);
 
     }
-
 }
