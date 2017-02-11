@@ -5,24 +5,29 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 
-@TeleOp(name = "Driving Test")
+@TeleOp(name = "Driving Period")
 public class DrivingTest extends OpMode {
 
     DcMotor motorRight;
     DcMotor motorLeft;
     DcMotor motorbackLeft;
     DcMotor mototrbackRight;
-    DcMotor con;
-    DcMotor Ball;
+    DcMotor Ball1;
+    DcMotor Ball2;
     Servo arm1;
+    OpticalDistanceSensor ods2;
+    Servo arm3;
     Servo arm2;
+    boolean lock = true;
 
     @Override
     public void init() {
+        arm3 = hardwareMap.servo.get("arm3");
         arm1 = hardwareMap.servo.get("arm1");
         arm2 = hardwareMap.servo.get("arm2");
         motorRight = hardwareMap.dcMotor.get("motor_right");
@@ -31,31 +36,44 @@ public class DrivingTest extends OpMode {
         motorbackLeft = hardwareMap.dcMotor.get("motor_backleft");
         motorbackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         mototrbackRight = hardwareMap.dcMotor.get("motor_backright");
-        Ball = hardwareMap.dcMotor.get("shoot");
+        Ball1 = hardwareMap.dcMotor.get("shoot1");
+        Ball2 = hardwareMap.dcMotor.get("shoot2");
+        Ball2.setDirection(DcMotorSimple.Direction.REVERSE);
+        ods2 = hardwareMap.opticalDistanceSensor.get("ods2");
     }
+
 
     @Override
     public void loop() {
-        boolean down;
-        if (gamepad1.dpad_up) {
-            Ball.setPower(1);
+
+        if(gamepad2.right_trigger > 0.5) {
+            arm2.setPosition(1);
         }
-        if (gamepad1.dpad_down) {
-            Ball.setPower(0);
-        }
-        if (gamepad2.x) {
-            arm1.setPosition(1);
-        }
-        if (gamepad2.y) {
-            arm1.setPosition(0);
+        if(gamepad2.right_bumper) {
             arm2.setPosition(0);
         }
-        if (gamepad2.b) {
-            arm2.setPosition(1);
-        }
-        if (gamepad2.a) {
-            arm2.setPosition(1);
+        if(gamepad2.left_trigger > 0.5) {
             arm1.setPosition(1);
+        }
+        if(gamepad2.left_bumper ) {
+            arm1.setPosition(0);
+        }
+        if(gamepad1.left_bumper) {
+            Ball1.setPower(1);
+        }
+        if(gamepad1.right_bumper) {
+            Ball2.setPower(1);
+        }
+        if(gamepad1.left_trigger > 0.5) {
+            Ball1.setPower(0);
+        }
+        if(gamepad1.right_trigger > 0.5 ) {
+            Ball2.setPower(0);
+        }
+
+
+        if(gamepad2.dpad_right) {
+            arm3.setPosition(1);
         }
 
  //       while (opModeIsActive()) {
@@ -67,7 +85,6 @@ public class DrivingTest extends OpMode {
             float leftBackPower = 0;
             float rightFrontPower = 0;
             float rightBackPower = 0;
-
             // Handle regular movement
             leftFrontPower += y1;
             leftBackPower += y1;
@@ -97,10 +114,10 @@ public class DrivingTest extends OpMode {
                 rightBackPower = (float)Range.scale(rightBackPower, -max, max, -1, 1);
             }
 
-            motorbackLeft.setPower(leftBackPower);
-            motorLeft.setPower(leftFrontPower);
-            motorRight.setPower(rightFrontPower);
-            mototrbackRight.setPower(rightBackPower);
+            motorbackLeft.setPower(-leftBackPower);
+            motorLeft.setPower(-leftFrontPower);
+            motorRight.setPower(-rightFrontPower);
+            mototrbackRight.setPower(-rightBackPower);
 
             // Here you set the motors' power to their respected power double.
             telemetry.addData("Right front : " , motorRight.getPower());
@@ -110,7 +127,7 @@ public class DrivingTest extends OpMode {
             telemetry.update();
 
 
- //       }
+ //boo hoo boo hoo boo hoo boo hoo boo hoo boo hoo boo hoo boo hoo boo hoo boo hoo       }
 
 
     }
