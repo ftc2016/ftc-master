@@ -14,58 +14,48 @@ import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "Driving Period")
 public class RTeleOp extends OpMode {
-
+    Servo jewelServo;
     DcMotor motor_right;
     DcMotor motor_left;
     DcMotor motor_backleft;
     DcMotor motor_backright;
     ColorSensor sensor_color;
-    Servo leftarm;
-    Servo rightarm;
-    Servo mainwheel;
     Servo servo_leftarm;
     Servo servo_rightarm;
     Servo servo_middleservo;
     double currentpos;
 
-    boolean lock = true;
-    boolean booleanpuns = true;
-    //boolean deeznuts = gottem;
-    boolean alwaysFalse = true;
-    boolean combustible_lemon_is_trash = true;
     @Override
     public void init() {
-
-        servo_leftarm = hardwareMap.servo.get("servo_armleft");
+        jewelServo = hardwareMap.servo.get("jewel_servo");
+//whiespace
+        servo_leftarm = hardwareMap.servo.get("left_glyph");
         // whitespace
-        servo_rightarm = hardwareMap.servo.get("servo_armright");
+        servo_rightarm = hardwareMap.servo.get("right_glyph");
         // whitespace
-        servo_middleservo = hardwareMap.servo.get("servo_middleservo");
+        servo_middleservo = hardwareMap.servo.get("lift_glyph");
         // whitespace
-        sensor_color = hardwareMap.colorSensor.get("sensor_color");
+        sensor_color = hardwareMap.colorSensor.get("jewel_color");
         // whitespace
-        motor_left = hardwareMap.dcMotor.get("motor_left");
+        motor_left = hardwareMap.dcMotor.get("left_drive");
         // whitespace
-        motor_backleft = hardwareMap.dcMotor.get("motor_backleft");
+        motor_backleft = hardwareMap.dcMotor.get("left_back_drive");
         // whitespace
-        motor_backright = hardwareMap.dcMotor.get("motor_backright");
+        motor_backright = hardwareMap.dcMotor.get("right_back_drive");
         // whitespace
-        motor_right = hardwareMap.dcMotor.get("motor_right");
+        motor_right = hardwareMap.dcMotor.get("right_drive");
 
         sensor_color.enableLed(true);
-
+        motor_left.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor_backleft.setDirection(DcMotorSimple.Direction.REVERSE);
+        jewelServo.setDirection(Servo.Direction.REVERSE);
     }
 
 
     @Override
     public void loop() {
-        cs();
-        telemetry.update();
-        cs();
-        telemetry.update();
         float x1 = gamepad1.right_stick_x, y1 = -gamepad1.right_stick_y;
         float x2 = gamepad1.left_stick_x;
-
 
         // Reset variables
         float leftFrontPower = 0;
@@ -85,6 +75,8 @@ public class RTeleOp extends OpMode {
         rightBackPower += x1;
 
         // Handle turning movement
+        jewelServo.setDirection(Servo.Direction.REVERSE);
+        jewelServo.setPosition(0);
         leftFrontPower += x2;
         leftBackPower += x2;
         rightFrontPower -= x2;
@@ -95,10 +87,10 @@ public class RTeleOp extends OpMode {
                 Math.max(Math.abs(rightFrontPower), Math.abs(rightBackPower))));
 
         if (max > 1) {
-            leftFrontPower = (float)Range.scale(leftFrontPower, -max, max, -1, 1);
-            leftBackPower = (float)Range.scale(leftBackPower, -max, max, -1, 1);
-            rightFrontPower = (float)Range.scale(rightFrontPower, -max, max, -1, 1);
-            rightBackPower = (float)Range.scale(rightBackPower, -max, max, -1, 1);
+            leftFrontPower = (float)Range.scale(leftFrontPower, -max, max, -.5, .5);
+            leftBackPower = (float)Range.scale(leftBackPower, -max, max, -.5, .5);
+            rightFrontPower = (float)Range.scale(rightFrontPower, -max, max, -.5, .5);
+            rightBackPower = (float)Range.scale(rightBackPower, -max, max, -.5, .5);
         }
 
         motor_backleft.setPower(-leftBackPower);
@@ -106,44 +98,36 @@ public class RTeleOp extends OpMode {
         motor_right.setPower(-rightFrontPower);
         motor_backright.setPower(-rightBackPower);
 
-        if(currentpos == 0.01) {
-            //1stpos
-
-        }
-        else if (currentpos == 0.2) {
-            //2ndpos
-        }
-        else if(currentpos == 0.5) {
-            //3rdpos
-        }
+        // Here you set the motors' power to their respected power double.
+        telemetry.addData("Right front : " , motor_right.getPower());
+        telemetry.addData("Right back : " , motor_backright.getPower());
+        telemetry.addData("Left front : " , motor_left.getPower());
+        telemetry.addData("Left back : " , motor_backleft.getPower());
         telemetry.update();
 
+
         // start of controller movements
-        if(gamepad1.a) {
-            mainwheel.setPosition(0.1);
-            double currentpos = 0.1;
+        if (gamepad2.a){
+            jewelServo.setPosition(.9);
         }
-        if(gamepad1.b) {
-            mainwheel.setPosition(.3);
-            double currentpos = .3;
+        if(gamepad2.dpad_left) {
+            servo_middleservo.setPosition(.1);
         }
-        if(gamepad1.x) {
-            mainwheel.setPosition(.2);
-            double currentpos = .2;
+        if(gamepad2.dpad_up) {
+            servo_middleservo.setPosition(.4);
         }
-        if(gamepad1.y) {
-            mainwheel.setPosition(.5);
-            double currentpos = .5;
+        if(gamepad2.dpad_right) {
+            servo_middleservo.setPosition(.65);
         }
         if(gamepad2.a) {
-            rightarm.setPosition(1);
-            leftarm.setPosition(0);
-            telemetry.addData("right arm position", rightarm.getPosition());
+            servo_rightarm.setPosition(1);
+            servo_leftarm.setPosition(0);
+            telemetry.addData("right arm position", servo_rightarm.getPosition());
         }
         if(gamepad2.b){
-            rightarm.setPosition(0);
-            leftarm.setPosition(1);
-            telemetry.addData("right arm position", rightarm.getPosition());
+            servo_rightarm.setPosition(0);
+            servo_leftarm.setPosition(1);
+            telemetry.addData("right arm position", servo_rightarm.getPosition());
         }
 
 
@@ -172,24 +156,4 @@ public class RTeleOp extends OpMode {
         }
         return dScale;
     }
-    public void cs() {
-
-        if (sensor_color.blue() > sensor_color.red()) {
-            telemetry.addData("blue is being shown", sensor_color.blue());
-
-        } else {
-            telemetry.addData("red is being shown", sensor_color.red());
-        }
-    }
 }
-       /* public void fstpos() {
-
-        }
-    public void sndpos() {
-
-    }
-    public void trdpos() {
-
-    }
-     }
-*/

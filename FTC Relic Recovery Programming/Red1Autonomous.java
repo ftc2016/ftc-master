@@ -30,7 +30,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Red1")
+@TeleOp(name="Red Autonomous")
 public class Red1Autonomous extends LinearOpMode {
 
     VuforiaLocalizer vuforia = null;
@@ -111,23 +111,27 @@ public class Red1Autonomous extends LinearOpMode {
 
         while (opModeIsActive()) {
             // Wait for the game to start (driver presses PLAY)
-            jewelServo.setPosition(.1);
+            jewelServo.setPosition(0);
             sleep(2000);
 
             if (jewelColor.blue() >= 7) {
                 telemetry.addData("Blue Color:", jewelColor.blue());
                 telemetry.addData("Red Color:", jewelColor.red());
                 telemetry.update();
-                moveOdometery(-.35, 100);
-                sleep(100);
-                moveOdometery(.35, 100);
+                //moveOdometery(-.35, 100);
+                //sleep(100);
+                //moveOdometery(.35, 100);
+                turnLeftOdometry(.35, 300);
+                turnRightOdometry(.35, 300);
             } else {
                 telemetry.addData("Red Color:", jewelColor.red());
                 telemetry.addData("Blue Color:", jewelColor.blue());
                 telemetry.update();
-                moveOdometery(.35, 100);
-                sleep(100);
-                moveOdometery(-.35, 100);
+                //moveOdometery(.35, 100);
+                //sleep(100);
+                //moveOdometery(-.35, 100);
+                turnRightOdometry(.35, 300);
+                turnLeftOdometry(.35, 300);
             }
             sleep(50);
             moveOdometery(0, 1000);
@@ -135,7 +139,7 @@ public class Red1Autonomous extends LinearOpMode {
             jewelServo.setPosition(0);
 
 
-            moveOdometery(-.2, 1300);
+            moveOdometery(.2, 1300);
 
             leftDrive.setPower(.3);
             rightDrive.setPower(-.3);
@@ -212,6 +216,23 @@ public class Red1Autonomous extends LinearOpMode {
         rightDrive.setPower(0);
         rightBackDrive.setPower(0);
         sleep(100);
+    }
+
+    public void turnLeftOdometry(double a, int b){
+        leftDrive.setPower(a);
+        rightDrive.setPower(-a);
+        leftBackDrive.setPower(a);
+        rightBackDrive.setPower(-a);
+        sleep(b);
+    }
+
+    public void turnRightOdometry(double a, int b){
+        leftDrive.setPower(-a);
+        rightDrive.setPower(a);
+        leftBackDrive.setPower(-a);
+        rightBackDrive.setPower(a);
+        sleep(b);
+
     }
 
     public void moveRight(int COUNTS) {

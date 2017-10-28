@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -25,7 +26,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Blue1")
+@TeleOp(name="Blue Autonomous")
 public class Blue1Autonomous extends LinearOpMode {
 
     VuforiaLocalizer vuforia = null;
@@ -106,8 +107,11 @@ public class Blue1Autonomous extends LinearOpMode {
         glyphRight.setPosition(1);
 
         while (opModeIsActive()) {
+
+
             // Wait for the game to start (driver presses PLAY)
-            jewelServo.setPosition(.1);
+
+            jewelServo.setPosition(0.1);
             sleep(2000);
 
             if (jewelColor.blue() >= 7) {
@@ -130,8 +134,8 @@ public class Blue1Autonomous extends LinearOpMode {
             jewelServo.setDirection(Servo.Direction.REVERSE);
             jewelServo.setPosition(0);
 
-            
-            moveOdometery(.2, 1300);
+
+           moveOdometery(.2, 1300);
 
             leftDrive.setPower(-.3);
             rightDrive.setPower(.3);
@@ -194,7 +198,7 @@ public class Blue1Autonomous extends LinearOpMode {
     public void lcrkey() {
         telemetry.addData("1 is Left, 2 is center, 3 is right value is ", lcr);
     }
-    
+
     private void moveOdometery(double a, int b) {
         leftDrive.setPower(a);
         leftBackDrive.setPower(a);
